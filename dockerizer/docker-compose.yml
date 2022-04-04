@@ -1,0 +1,97 @@
+version: '3.8'
+services:
+  db:
+    container_name: mysql-container
+    platform: linux/x86_64
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'sword'
+      MYSQL_USER: 'sword'
+      MYSQL_PASSWORD: 'sword'
+      MYSQL_ROOT_PASSWORD: 'rootsword'
+      MYSQL_ROOT_HOST: "%"
+    ports:
+      - '3306:3306'
+    volumes:
+      - ./data:/var/lib/mysql
+    networks:
+      network_sword:
+        ipv4_address: 172.20.32.10
+
+  nats:
+    image: nats:latest
+    restart: always
+    ports:
+      - '4222:4222'
+      - '8222:8222'
+      - '6222:6222'
+      - '9222:9222'
+    command: -c /nats/ws.conf
+    volumes:
+      - ./nats:/nats
+    networks:
+      network_sword:
+        ipv4_address: 172.20.32.11
+
+  backend:
+    image: backend
+    container_name: backend
+    build:
+      context: ../backend
+      dockerfile: docker/Dockerfile
+ #   command: sh -c "./helpers/wait && npm run test-docker && npm run migrate-docker && npm run start-docker"
+    environment:
+      WAIT_HOSTS: '172.20.32.10:3306'
+      WAIT_HOSTS_TIMEOUT: 120
+      WAIT_SLEEP_INTERVAL: 5
+      WAIT_HOST_CONNECT_TIMEOUT: 30
+      DB_USER: 'sword'
+      DB_PWD: 'sword'
+      DB_NAME: 'sword'
+      DB_HOST: '172.20.32.10'
+      DB_PORT: '3306'
+      DB_DIALECT: 'mysql'
+      DB_POOL_MAX: 5
+      DB_POOL_MIN: 1
+      DB_POOL_ACQUIRE: 30000
+      DB_POOL_IDLE: 10000
+      DB_ALTER_DDL: 'false'
+      API_PORT: '8080'
+      SESSION_SECRET: 'code-challenge-070620201810'
+      NATS_HOST: '172.20.32.11'
+      NATS_PORT: '4222'
+      NATS_TOKEN: '3secret'
+      NATS_TIMEOUT: 2000
+      NATS_NOECHO: 'true'
+      NATS_MAXRECONNECTATTEMPTS: 10
+      NATS_PINGINTERVAL: 3000
+      NATS_MAXPINGOUT: 2
+    ports:
+      - '8080:8080'
+    depends_on:
+      - db
+      - nats
+    networks:
+      network_sword:
+        ipv4_address: 172.20.32.12
+
+  frontend:
+    image: frontend
+    container_name: frontend
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    ports:
+      - '1234:80'
+    depends_on:
+      - db
+      - nats
+      - backend
+
+networks:
+  network_sword:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.32.0/24

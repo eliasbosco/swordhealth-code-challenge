@@ -1,0 +1,51 @@
+{
+  "name": "sword-health-code-challenge-backend",
+  "version": "1.0.0",
+  "description": "SWORD HEALTH Code Challenge - Backend service",
+  "main": "app.js",
+  "scripts": {
+    "start": "env-cmd node app.js",
+    "start-docker": "node app.js",
+    "nodemon": "env-cmd nodemon app.js",
+    "db-drop": "env-cmd npx sequelize-cli db:drop",
+    "db-create": "env-cmd npx sequelize-cli db:create",
+    "migrate-undo-all": "env-cmd npx sequelize-cli db:migrate:undo:all",
+    "migrate": "env-cmd npx sequelize-cli db:migrate",
+    "migrate-docker": "npx sequelize-cli db:migrate",
+
+    "db-create-test": "env-cmd -f .env.test npx sequelize-cli db:create",
+    "db-drop-test": "env-cmd -f .env.test npx sequelize-cli db:drop",
+    "migrate-test": "env-cmd -f .env.test npx sequelize-cli db:migrate",
+    "test": "npm run db-create-test ; npm run migrate-test ; env-cmd -f .env.test nyc --reporter=html mocha --timeout 30000 --exit --recursive ; npm run db-drop-test",
+
+    "db-create-test-docker": "env-cmd -f .env.test.docker npx sequelize-cli db:create",
+    "db-drop-test-docker": "env-cmd -f .env.test.docker npx sequelize-cli db:drop",
+    "migrate-test-docker": "env-cmd -f .env.test.docker npx sequelize-cli db:migrate",
+    "test-docker": "npm run db-create-test-docker ; npm run migrate-test-docker ; env-cmd -f .env.test.docker nyc --reporter=html mocha --timeout 30000 --exit --recursive ; npm run db-drop-test-docker"
+  },
+  "keywords": [],
+  "author": "Elias Bosco",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.2",
+    "chai": "^4.3.6",
+    "chai-http": "^4.3.0",
+    "compression": "^1.7.4",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "express-mysql-session": "^2.1.7",
+    "express-session": "^1.17.2",
+    "mocha": "^9.2.2",
+    "mysql2": "^2.3.3",
+    "nats": "^2.6.1",
+    "sequelize": "^6.17.0",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15",
+    "nyc": "^15.1.0"
+  }
+}
