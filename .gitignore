@@ -106,3 +106,4 @@ dist
 frontend/.parcel-cache/
 frontend/.idea/
 backend/.idea/
+dockerizer/data/
