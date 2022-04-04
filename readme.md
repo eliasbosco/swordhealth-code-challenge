@@ -49,10 +49,10 @@ many features.
   - GET  /auth/is-logged - Check and return user session data
 - ##### Task
   - GET    /task/tasks    - List all tasks
-    GET    /task/task/:id - List task based on its id
-    POST   /task/task     - Add new task
-    PUT    /task/task/:id - Edit task based on its id
-    DELETE /task/task/:id - Remove task based on its id
+  - GET    /task/task/:id - List task based on its id
+  - POST   /task/task     - Add new task
+  - PUT    /task/task/:id - Edit task based on its id
+  - DELETE /task/task/:id - Remove task based on its id
 
 ## Tech Requirements:
 - Node was chosen to develop the HTTP API
